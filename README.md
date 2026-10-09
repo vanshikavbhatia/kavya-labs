@@ -81,7 +81,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/kavya-labs.git
+git clone https://github.com/vanshikavbhatia/kavya-labs.git
 
 # Navigate to project directory
 cd kavya-labs
@@ -101,11 +101,11 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 1. Push your repository to GitHub:
    ```bash
-   git remote add origin https://github.com/<your-username>/kavya-labs.git
+   git remote set-url origin https://github.com/vanshikavbhatia/kavya-labs.git
    git branch -M main
    git push -u origin main
    ```
 2. Go to [vercel.com/new](https://vercel.com/new).
 3. Import your `kavya-labs` repository.
 4. Keep standard default settings (Framework: Next.js) and click **Deploy**.
-5. Your live URL will be ready at: `https://<your-project>.vercel.app`.
+5. Your live URL will be ready at: `https://kavya-labs.vercel.app`.
