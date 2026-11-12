@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { getUserByEmail } from "./userStore";
 
 export const isGoogleConfigured = Boolean(
   process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
@@ -17,20 +18,47 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         const email = credentials?.email?.trim().toLowerCase();
-        
-        // Demo authentication: accepts demo@kavyalabs.com or default demo sign-in
+
+        // 1. Admin Demo Authentication (Role: Admin)
+        if (email === "admin@kavyalabs.com") {
+          return {
+            id: "usr_kavya_adm_001",
+            name: "Kavya Labs Admin",
+            email: "admin@kavyalabs.com",
+            image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80",
+            role: "Admin",
+            provider: "Admin Demo Account",
+          };
+        }
+
+        // 2. Normal User Demo Authentication (Role: User)
         if (!email || email === "demo@kavyalabs.com") {
           return {
-            id: "kavya-demo-usr-8492",
+            id: "usr_kavya_usr_001",
             name: "Kavya Labs Demo User",
             email: "demo@kavyalabs.com",
-            image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80",
-            role: "Lead Swarm Architect",
+            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80",
+            role: "User",
             provider: "Demo Account",
           };
         }
 
-        // Only demo account is enabled without external OAuth credentials
+        // 3. Dynamic Registered Users from User Store
+        const user = getUserByEmail(email);
+        if (user) {
+          if (user.status === "Suspended") {
+            throw new Error("ACCOUNT_SUSPENDED: This account is suspended. Contact administrator.");
+          }
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80",
+            role: user.role,
+            provider: "Demo Credentials",
+          };
+        }
+
         return null;
       },
     }),
@@ -51,15 +79,15 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role || "Enterprise Member";
-        token.provider = account?.provider === "google" ? "Google OAuth" : "Demo Account";
+        token.role = user.role || "User";
+        token.provider = account?.provider === "google" ? "Google OAuth" : ((user as { provider?: string }).provider || "Demo Account");
       }
       return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
+        session.user.role = (token.role as string) || "User";
         session.user.provider = token.provider as string;
       }
       return session;

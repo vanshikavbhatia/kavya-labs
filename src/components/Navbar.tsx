@@ -12,7 +12,8 @@ import {
   User,
   LayoutDashboard,
   LogOut,
-  ChevronDown
+  ChevronDown,
+  Shield
 } from "lucide-react";
 
 export default function Navbar() {
@@ -141,6 +142,17 @@ export default function Navbar() {
                       </p>
                     </div>
 
+                    {session.user?.role === "Admin" && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-purple-300 hover:text-white bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 transition-colors mb-1"
+                      >
+                        <Shield className="w-4 h-4 text-purple-400" />
+                        <span>Admin Console</span>
+                      </Link>
+                    )}
+
                     <Link
                       href="/dashboard"
                       onClick={() => setUserDropdownOpen(false)}
@@ -252,7 +264,22 @@ export default function Navbar() {
                   <div className="px-3 py-2 rounded-lg bg-white/5 border border-white/10 mb-1">
                     <p className="text-xs font-semibold text-white">{session.user?.name}</p>
                     <p className="text-[11px] text-gray-400 font-mono">{session.user?.email}</p>
+                    {session.user?.role === "Admin" && (
+                      <span className="inline-block mt-1 text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                        Admin Privileges
+                      </span>
+                    )}
                   </div>
+                  {session.user?.role === "Admin" && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-purple-700 hover:bg-purple-600 rounded-lg shadow-md border border-purple-400/30"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Admin Console</span>
+                    </Link>
+                  )}
                   <Link
                     href="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}

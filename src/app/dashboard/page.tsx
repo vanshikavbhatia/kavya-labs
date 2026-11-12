@@ -18,6 +18,8 @@ import {
   Server,
   Clock,
   CheckCircle2,
+  AlertTriangle,
+  Shield,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -25,7 +27,11 @@ export const metadata: Metadata = {
   description: "Secure enterprise agent swarm workspace and session console.",
 };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams?: { error?: string };
+}) {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.user) {
@@ -35,6 +41,7 @@ export default async function DashboardPage() {
   const user = session.user;
   const authProvider = user.provider || "Demo Account";
   const userRole = user.role || "Lead Swarm Architect";
+  const isAdmin = user.role === "Admin";
 
   return (
     <div className="min-h-screen bg-[#080b11] text-gray-100 selection:bg-indigo-500/30 selection:text-indigo-200">
@@ -60,6 +67,15 @@ export default async function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-300 hover:text-white bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 transition-colors"
+              >
+                <Shield className="w-3.5 h-3.5 text-purple-400" />
+                <span>Admin Console</span>
+              </Link>
+            )}
             <Link
               href="/profile"
               className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 border border-white/10 transition-colors"
@@ -74,6 +90,21 @@ export default async function DashboardPage() {
 
       {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Unauthorized Admin Access Warning */}
+        {searchParams?.error === "unauthorized_admin_access" && (
+          <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-start gap-3 shadow-lg">
+            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-bold text-white block text-sm mb-1">
+                Access Restricted: Administrator Privileges Required
+              </span>
+              <span>
+                You attempted to access the Kavya Labs Admin Console (/admin), which is protected by Role-Based Access Control (RBAC). Your current session is authenticated as a standard User. To access the Admin Console, please sign in with an Administrator account (e.g. <code>admin@kavyalabs.com</code>).
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Welcome Section */}
         <div className="relative mb-8 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-[#0f1422] to-violet-950/30 border border-white/10 overflow-hidden shadow-xl">
           <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 blur-[100px] pointer-events-none" />

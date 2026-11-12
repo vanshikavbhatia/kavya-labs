@@ -9,6 +9,7 @@ import {
   Cpu,
   User,
   ShieldCheck,
+  Shield,
   Mail,
   KeyRound,
   Calendar,
@@ -60,6 +61,15 @@ export default async function ProfilePage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {user.role === "Admin" && (
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-300 hover:text-white bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 transition-colors"
+              >
+                <Shield className="w-3.5 h-3.5 text-purple-400" />
+                <span>Admin Console</span>
+              </Link>
+            )}
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-300 hover:text-white hover:bg-white/5 border border-white/10 transition-colors"
@@ -218,6 +228,15 @@ export default async function ProfilePage() {
         {/* Footer Actions */}
         <div className="p-6 rounded-2xl bg-[#0f1422] border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
+            {user.role === "Admin" && (
+              <Link
+                href="/admin"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-purple-300 hover:text-white bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 transition-colors"
+              >
+                <Shield className="w-3.5 h-3.5 text-purple-400" />
+                <span>Admin Console</span>
+              </Link>
+            )}
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-semibold border border-white/10 transition-colors"
